@@ -1,4 +1,4 @@
-package com.artem.android.mindtracker.ui.theme
+package com.artem.android.mindtracker.presentation.ui.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
