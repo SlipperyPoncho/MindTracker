@@ -1,4 +1,4 @@
-package com.artem.android.mindtracker.presentation.profilefeature
+package com.artem.android.mindtracker.ui.screens
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
