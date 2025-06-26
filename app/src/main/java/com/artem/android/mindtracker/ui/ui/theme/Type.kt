@@ -1,4 +1,4 @@
-package com.artem.android.mindtracker.presentation.ui.theme
+package com.artem.android.mindtracker.ui.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

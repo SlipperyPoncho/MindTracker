@@ -1,4 +1,4 @@
-package com.artem.android.mindtracker.presentation.navigation
+package com.artem.android.mindtracker.ui.navigation
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -13,19 +13,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
-import androidx.navigation.compose.rememberNavController
-import com.artem.android.mindtracker.presentation.homescreen.HomeScreen
-import com.artem.android.mindtracker.presentation.moodfeature.MoodScreen
-import com.artem.android.mindtracker.presentation.profilefeature.ProfileScreen
+import androidx.navigation.compose.currentBackStackEntryAsState
+import com.artem.android.mindtracker.ui.screens.HomeScreen
+import com.artem.android.mindtracker.ui.screens.MoodScreen
+import com.artem.android.mindtracker.ui.screens.ProfileScreen
 
 enum class Destination(
     val route: String,
@@ -39,15 +36,14 @@ enum class Destination(
 }
 
 @Composable
-fun AppNavHost(
+private fun MainNavHost(
     navController: NavHostController,
-    startDestination: Destination,
     modifier: Modifier = Modifier
 ) {
     NavHost(
         navController,
         modifier = modifier,
-        startDestination = startDestination.route
+        startDestination = Destination.HOME.route
     ) {
         Destination.entries.forEach { dest ->
             composable(dest.route) {
@@ -62,18 +58,20 @@ fun AppNavHost(
 }
 
 @Composable
-fun NavigationBarComposable(modifier: Modifier = Modifier) {
-    val navController = rememberNavController()
-    val startDestination = Destination.HOME
-    var selectedDestination by rememberSaveable { mutableIntStateOf(startDestination.ordinal) }
+fun MainNavGraph(
+    navController: NavHostController,
+    modifier: Modifier = Modifier
+) {
+    val navBackStackEntry by navController.currentBackStackEntryAsState()
+    val currentRoute = navBackStackEntry?.destination?.route ?: Destination.HOME.route
 
     Scaffold(
         modifier = modifier,
         bottomBar = {
             NavigationBar(windowInsets = NavigationBarDefaults.windowInsets) {
-                Destination.entries.forEachIndexed { index, dest ->
+                Destination.entries.forEach { dest ->
                     NavigationBarItem(
-                        selected = selectedDestination == index,
+                        selected = currentRoute == dest.route,
                         onClick = {
                             navController.navigate(route = dest.route) {
                                 popUpTo(navController.graph.findStartDestination().id) {
@@ -82,7 +80,6 @@ fun NavigationBarComposable(modifier: Modifier = Modifier) {
                                 launchSingleTop = true
                                 restoreState = true
                             }
-                            selectedDestination = index
                         },
                         icon = {
                             Icon(
@@ -96,6 +93,6 @@ fun NavigationBarComposable(modifier: Modifier = Modifier) {
             }
         }
     ) { contentPadding ->
-        AppNavHost(navController, startDestination, modifier = Modifier.padding(contentPadding))
+        MainNavHost(navController, modifier = Modifier.padding(contentPadding))
     }
 }
